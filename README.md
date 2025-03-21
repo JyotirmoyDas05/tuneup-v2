@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TuneUp V2
 
-## Getting Started
+A modern music streaming and artist management platform built with Next.js, TypeScript, and MongoDB.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Before you begin, ensure you have the following installed:
+- Node.js (version 18 or higher)
+- MongoDB (local installation or MongoDB Atlas account)
+- npm or yarn package manager
+
+## Environment Variables
+
+Create a `.env` file in the backend directory with the following variables:
+```
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRES_IN=7d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd tuneup-v2
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install all dependencies (frontend and backend):
+```bash
+npm run install-all
+```
 
-## Learn More
+Or install frontend and backend separately:
+```bash
+npm run install:frontend
+npm run install:backend
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Running the Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Start the backend server:
+```bash
+npm run dev:backend
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. In a new terminal, start the frontend development server:
+```bash
+npm run dev:frontend
+```
 
-## Deploy on Vercel
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+- `npm run install-all` - Install dependencies for both frontend and backend
+- `npm run install:frontend` - Install frontend dependencies only
+- `npm run install:backend` - Install backend dependencies only
+
+### Development
+- `npm run dev:frontend` - Start frontend development server
+- `npm run dev:backend` - Start backend development server
+
+### Production
+- `npm run build:frontend` - Build frontend for production
+- `npm run build:backend` - Build backend for production
+- `npm run start:frontend` - Start frontend production server
+- `npm run start:backend` - Start backend production server
+
+## Project Structure
+
+```
+tuneup-v2/
+├── frontend/          # Next.js frontend application
+├── backend/           # Express.js backend application
+├── package.json       # Root package.json for project-wide scripts
+└── README.md         # This file
+```
+
+## Features
+
+- User authentication (register/login)
+- Artist profiles
+- Music streaming
+- User management
+- Modern UI with responsive design
+
+## Technologies Used
+
+- Frontend:
+  - Next.js
+  - React
+  - TypeScript
+  - Tailwind CSS
+  - Framer Motion
+
+- Backend:
+  - Node.js
+  - Express.js
+  - TypeScript
+  - MongoDB
+  - JWT Authentication
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
+
+## License
+
+This project is licensed under the ISC License.
