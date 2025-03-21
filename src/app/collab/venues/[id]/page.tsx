@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+import BookingForm from "@/components/booking/BookingForm";
+import { Toaster } from "react-hot-toast";
 
 // This would typically come from an API or database
 const venuesData = {
@@ -132,6 +135,7 @@ export default function VenueProfile() {
   const params = useParams();
   const venueId = params.id as string;
   const venue = venuesData[venueId];
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   if (!venue) {
     return (
@@ -143,8 +147,15 @@ export default function VenueProfile() {
     );
   }
 
+  const handleBookingComplete = () => {
+    setShowBookingForm(false);
+    // In a real implementation, you would update the notifications in your backend
+    // and the cafe owner would see the new booking request in their dashboard
+  };
+
   return (
     <main className="min-h-screen pt-24 px-4 md:px-8 lg:px-16">
+      <Toaster position="top-right" />
       <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row gap-8 items-start">
@@ -310,7 +321,10 @@ export default function VenueProfile() {
 
         {/* Booking Section */}
         <div className="mt-8 flex gap-4">
-          <button className="bg-[#3674B5] text-white px-8 py-3 rounded-full hover:bg-[#2A5C91] transition-colors">
+          <button 
+            onClick={() => setShowBookingForm(true)}
+            className="bg-[#3674B5] text-white px-8 py-3 rounded-full hover:bg-[#2A5C91] transition-colors"
+          >
             Book Venue
           </button>
           <button className="bg-[#BAE6FF] text-gray-800 px-8 py-3 rounded-full hover:bg-[#A1E3F9] transition-colors">
@@ -331,6 +345,14 @@ export default function VenueProfile() {
           ))}
         </div>
       </div>
+
+      {showBookingForm && (
+        <BookingForm
+          venueId={venueId}
+          venueName={venue.name}
+          onBookingComplete={handleBookingComplete}
+        />
+      )}
     </main>
   );
 } 
