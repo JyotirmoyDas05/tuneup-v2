@@ -60,7 +60,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-gray-700 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-gray-300">
-            © 2023 TuneUp. All rights reserved.
+            © 2025 TuneUp. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <a href="#" className="text-gray-300 hover:text-white transition-colors duration-200">

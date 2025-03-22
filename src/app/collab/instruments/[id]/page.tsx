@@ -3,8 +3,37 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 
-// This would typically come from an API or database
-const musiciansData = {
+// Define types for the musician data
+interface Rates {
+  hourly: string;
+  session: string;
+  performance: string;
+}
+
+interface SocialLinks {
+  instagram: string;
+  youtube: string;
+  soundcloud: string;
+}
+
+interface Musician {
+  name: string;
+  image: string;
+  description: string;
+  instruments: string[];
+  expertise: string[];
+  experience: string;
+  training: string;
+  achievements: string[];
+  availability: string;
+  location: string;
+  equipment: string[];
+  rates: Rates;
+  socialLinks: SocialLinks;
+}
+
+// Define the musicians data with proper indexing
+const musiciansData: Record<string, Musician> = {
   "ravi-kumar": {
     name: "Ravi Kumar",
     image: "/images/artists/musician1.jpg",

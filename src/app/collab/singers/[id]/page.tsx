@@ -3,8 +3,28 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 
+// Define interfaces for singer data
+interface SocialLinks {
+  instagram: string;
+  youtube: string;
+  spotify: string;
+}
 
-const singersData = {
+interface Singer {
+  name: string;
+  image: string;
+  description: string;
+  genres: string[];
+  experience: string;
+  languages: string[];
+  achievements: string[];
+  availability: string;
+  location: string;
+  socialLinks: SocialLinks;
+}
+
+// Use Record to define proper string indexing
+const singersData: Record<string, Singer> = {
   "aanya-sharma": {
     name: "Aanya Sharma",
     image: "/images/artists/singer1.jpg",

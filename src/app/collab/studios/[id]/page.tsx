@@ -3,8 +3,63 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 
-// This would typically come from an API or database
-const studiosData = {
+// Define interfaces for studio data
+interface Feature {
+  name: string;
+  description: string;
+  image: string;
+  features: string[];
+}
+
+interface Equipment {
+  microphones: string[];
+  preamps: string[];
+  instruments: string[];
+}
+
+interface Service {
+  name: string;
+  description: string;
+  rate: string;
+}
+
+interface Engineer {
+  name: string;
+  role: string;
+  experience: string;
+  image: string;
+}
+
+interface Contact {
+  email: string;
+  phone: string;
+}
+
+interface SocialLinks {
+  instagram: string;
+  facebook: string;
+  youtube: string;
+}
+
+interface Studio {
+  name: string;
+  image: string;
+  description: string;
+  type: string;
+  established: string;
+  facilities: Feature[];
+  equipment: Equipment;
+  services: Service[];
+  engineers: Engineer[];
+  clientele: string[];
+  availability: string;
+  location: string;
+  contact: Contact;
+  socialLinks: SocialLinks;
+}
+
+// Use Record to define proper string indexing
+const studiosData: Record<string, Studio> = {
   "harmony-studio": {
     name: "Harmony Studio",
     image: "/images/studios/harmony-main.jpg",

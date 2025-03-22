@@ -3,8 +3,49 @@
 import Image from "next/image";
 import { useParams } from "next/navigation";
 
-// This would typically come from an API or database
-const bandsData = {
+// Define a type for band data
+interface BandMember {
+  name: string;
+  role: string;
+  image: string;
+}
+
+interface Release {
+  title: string;
+  year: string;
+  type: string;
+}
+
+interface Show {
+  date: string;
+  venue: string;
+  location: string;
+}
+
+interface SocialLinks {
+  instagram: string;
+  youtube: string;
+  spotify: string;
+  facebook: string;
+}
+
+interface Band {
+  name: string;
+  image: string;
+  description: string;
+  genre: string;
+  formed: string;
+  members: BandMember[];
+  achievements: string[];
+  discography: Release[];
+  upcomingShows: Show[];
+  availability: string;
+  location: string;
+  socialLinks: SocialLinks;
+}
+
+// Define the bands data with proper indexing
+const bandsData: Record<string, Band> = {
   "dhwani": {
     name: "Dhwani",
     image: "/images/bands/band1.jpg",

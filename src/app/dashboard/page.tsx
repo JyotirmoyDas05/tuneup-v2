@@ -10,33 +10,77 @@ interface ProfileData {
   [key: string]: any;
 }
 
+interface DashboardData {
+  stats: {
+    totalSongs: number;
+    totalCollaborations: number;
+    totalRevenue: number;
+    activeProjects: number;
+  };
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    title: string;
+    timestamp: string;
+  }>;
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<DashboardData>({
+    stats: {
+      totalSongs: 0,
+      totalCollaborations: 0,
+      totalRevenue: 0,
+      activeProjects: 0
+    },
+    recentActivity: []
+  });
 
   useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      router.push('/login');
-      return;
-    }
-
-    // Check if profile is completed
-    const profileData = localStorage.getItem('profileData');
-    if (!profileData) {
-      router.push('/profile-selection');
-      return;
-    }
-
+    // Check for auth
     try {
-      setProfileData(JSON.parse(profileData));
+      const userData = localStorage.getItem('user');
+      if (!userData) {
+        router.push('/login');
+        return;
+      }
+
+      // Check for profile data
+      const profileData = localStorage.getItem('profileData');
+      if (!profileData) {
+        router.push('/profile-selection');
+        return;
+      }
+
+      // Safely parse JSON data with type assertions
+      setProfileData(JSON.parse(profileData) as ProfileData);
+      
+      // Mock data for the dashboard
+      // In a real app, this would come from an API call
+      setTimeout(() => {
+        setData({
+          stats: {
+            totalSongs: 12,
+            totalCollaborations: 5,
+            totalRevenue: 15000,
+            activeProjects: 3
+          },
+          recentActivity: [
+            { id: '1', type: 'collaboration', title: 'New collaboration request from John Doe', timestamp: '2 hours ago' },
+            { id: '2', type: 'booking', title: 'Booking confirmed at Blue Moon Cafe', timestamp: '1 day ago' },
+            { id: '3', type: 'message', title: 'New message from Studio XYZ', timestamp: '3 days ago' }
+          ]
+        });
+        setLoading(false);
+      }, 1000);
     } catch (error) {
-      console.error('Error parsing profile data:', error);
-      toast.error('Error loading profile data');
-    } finally {
-      setLoading(false);
+      console.error("Error parsing data from localStorage:", error);
+      // Handle the error appropriately - either redirect or show an error message
+      toast.error("There was a problem loading your data");
+      router.push('/login');
     }
   }, [router]);
 

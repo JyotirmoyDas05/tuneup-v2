@@ -124,13 +124,16 @@ export default function BandProfile() {
     const { name, value } = e.target;
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof BandProfileData],
-          [child]: value,
-        },
-      }));
+      setFormData(prev => {
+        const parentObject = prev[parent as keyof BandProfileData] || {};
+        return {
+          ...prev,
+          [parent]: {
+            ...(typeof parentObject === 'object' ? parentObject : {}),
+            [child]: value,
+          },
+        };
+      });
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }

@@ -1,12 +1,17 @@
 import { useEffect } from "react";
 
-export function useMousePosition(
-  ref: React.RefObject<HTMLElement>,
+// Use a more generic approach with Element to catch all HTML element types
+export function useMousePosition<T extends Element>(
+  ref: React.RefObject<T | null>,
   callback?: ({ x, y }: { x: number; y: number }) => void,
 ) {
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const { clientX, clientY } = event;
+    // Skip if ref or ref.current is null
+    if (!ref || !ref.current) return;
+
+    const handleMouseMove = (event: Event) => {
+      const mouseEvent = event as MouseEvent;
+      const { clientX, clientY } = mouseEvent;
       const { top, left } = ref.current?.getBoundingClientRect() || {
         top: 0,
         left: 0,
@@ -15,8 +20,9 @@ export function useMousePosition(
       callback?.({ x: clientX - left, y: clientY - top });
     };
 
-    const handleTouchMove = (event: TouchEvent) => {
-      const { clientX, clientY } = event.touches[0];
+    const handleTouchMove = (event: Event) => {
+      const touchEvent = event as TouchEvent;
+      const { clientX, clientY } = touchEvent.touches[0];
       const { top, left } = ref.current?.getBoundingClientRect() || {
         top: 0,
         left: 0,
@@ -25,13 +31,19 @@ export function useMousePosition(
       callback?.({ x: clientX - left, y: clientY - top });
     };
 
-    ref.current?.addEventListener("mousemove", handleMouseMove);
-    ref.current?.addEventListener("touchmove", handleTouchMove);
+    // Add event listeners safely
+    const element = ref.current;
+    if (element) {
+      element.addEventListener("mousemove", handleMouseMove);
+      element.addEventListener("touchmove", handleTouchMove);
+    }
 
-    const nodeRef = ref.current;
+    // Cleanup function to remove event listeners
     return () => {
-      nodeRef?.removeEventListener("mousemove", handleMouseMove);
-      nodeRef?.removeEventListener("touchmove", handleTouchMove);
+      if (element) {
+        element.removeEventListener("mousemove", handleMouseMove);
+        element.removeEventListener("touchmove", handleTouchMove);
+      }
     };
   }, [ref, callback]);
 } 

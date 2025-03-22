@@ -108,13 +108,16 @@ export default function StudioProfile() {
     const { name, value } = e.target;
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof StudioProfileData],
-          [child]: value,
-        },
-      }));
+      setFormData(prev => {
+        const parentObject = prev[parent as keyof StudioProfileData] || {};
+        return {
+          ...prev,
+          [parent]: {
+            ...(typeof parentObject === 'object' ? parentObject : {}),
+            [child]: value,
+          },
+        };
+      });
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }

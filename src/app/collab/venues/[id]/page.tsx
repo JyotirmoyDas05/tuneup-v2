@@ -6,8 +6,77 @@ import { useState } from "react";
 import BookingForm from "@/components/booking/BookingForm";
 import { Toaster } from "react-hot-toast";
 
-// This would typically come from an API or database
-const venuesData = {
+// Define interfaces for venue data
+interface Space {
+  name: string;
+  description: string;
+  image: string;
+  features: string[];
+}
+
+interface Amenity {
+  name: string;
+  details: string[];
+}
+
+interface Event {
+  name: string;
+  description: string;
+  schedule: string;
+  price: string;
+}
+
+interface FoodMenu {
+  cuisine: string;
+  specialties: string[];
+  serviceHours: string;
+}
+
+interface BookingInfo {
+  slots: string[];
+  rates: string;
+  minimumDuration: string;
+}
+
+interface Location {
+  address: string;
+  city: string;
+  landmarks: string;
+  parking: string;
+}
+
+interface Contact {
+  email: string;
+  phone: string;
+  manager: string;
+}
+
+interface SocialLinks {
+  instagram: string;
+  facebook: string;
+  zomato: string;
+}
+
+interface Venue {
+  name: string;
+  image: string;
+  description: string;
+  type: string;
+  established: string;
+  capacity: string;
+  spaces: Space[];
+  amenities: Amenity[];
+  events: Event[];
+  pastPerformers: string[];
+  foodMenu: FoodMenu;
+  bookingInfo: BookingInfo;
+  location: Location;
+  contact: Contact;
+  socialLinks: SocialLinks;
+}
+
+// Use Record to define proper string indexing
+const venuesData: Record<string, Venue> = {
   "blue-moon": {
     name: "Blue Moon Cafe",
     image: "/images/venues/blue-moon-main.jpg",

@@ -7,8 +7,11 @@ import { Badge } from "./badge";
 import { useEffect, useState } from "react";
 
 interface User {
+  id?: string;
   name: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export function Header() {
@@ -19,17 +22,24 @@ export function Header() {
   useEffect(() => {
     // Check for auth state changes
     const checkAuth = () => {
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        try {
-          const parsedUser = JSON.parse(userData);
+      // Safely get and parse user data from localStorage with proper error handling
+      try {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+          const parsedUser = JSON.parse(userData) as User;
+          
+          // Ensure the user object has a name property
+          if (!parsedUser.name && (parsedUser.firstName || parsedUser.lastName)) {
+            parsedUser.name = `${parsedUser.firstName || ''} ${parsedUser.lastName || ''}`.trim();
+          }
+          
           setUser(parsedUser);
-        } catch (e) {
-          console.error('Error parsing user data:', e);
-          localStorage.removeItem('user');
+        } else {
           setUser(null);
         }
-      } else {
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        localStorage.removeItem('user');
         setUser(null);
       }
     };
@@ -49,13 +59,15 @@ export function Header() {
     };
   }, []);
 
-  // Get initials from full name
-  const getInitials = (name: string) => {
+  // Get initials from full name with null safety
+  const getInitials = (name: string): string => {
+    if (!name) return '?';
+    
     return name
       .split(' ')
-      .map(part => part[0])
+      .map(part => part?.[0] || '')
       .join('')
-      .toUpperCase();
+      .toUpperCase() || '?';
   };
 
   // Hide header elements on auth pages
@@ -85,14 +97,14 @@ export function Header() {
             <Avatar
               size="md"
               className="border-2 border-white shadow-md"
-              alt={user.name}
+              alt={user.name || 'User'}
               fallback={<span className="text-lg">{getInitials(user.name)}</span>}
             />
             <Badge 
               size="sm" 
               className="absolute -bottom-1 -right-1 bg-[#3674B5] hover:bg-[#3674B5] text-white shadow-sm"
             >
-              {user.name.split(' ')[0]}
+              {user.name?.split(' ')?.[0] || 'User'}
             </Badge>
           </div>
         ) : !isProfilePage && (

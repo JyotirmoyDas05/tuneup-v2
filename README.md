@@ -34,11 +34,18 @@ npm run install-all
 
 Or install frontend and backend separately:
 ```bash
-npm run install:frontend
-npm run install:backend
+# Install frontend dependencies
+cd frontend
+npm install
+
+# Install backend dependencies
+cd ../backend
+npm install
 ```
 
 ## Running the Application
+
+### Development Mode
 
 1. Start the backend server:
 ```bash
@@ -54,6 +61,39 @@ The application will be available at:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
+### Production Deployment
+
+1. Build the frontend and backend for production:
+```bash
+# Build the frontend
+cd frontend
+npm run build
+
+# Build the backend
+cd ../backend
+npm run build
+```
+
+2. Start the production servers:
+```bash
+# Start the backend server
+cd backend
+npm start
+
+# Start the frontend server
+cd ../frontend
+npm start
+```
+
+For a more streamlined approach, you can use the root scripts:
+```bash
+# Build both frontend and backend
+npm run build
+
+# Start both frontend and backend in production mode
+npm run start
+```
+
 ## Available Scripts
 
 ### Installation
@@ -64,12 +104,15 @@ The application will be available at:
 ### Development
 - `npm run dev:frontend` - Start frontend development server
 - `npm run dev:backend` - Start backend development server
+- `npm run dev` - Start both frontend and backend development servers
 
 ### Production
 - `npm run build:frontend` - Build frontend for production
 - `npm run build:backend` - Build backend for production
+- `npm run build` - Build both frontend and backend for production
 - `npm run start:frontend` - Start frontend production server
 - `npm run start:backend` - Start backend production server
+- `npm run start` - Start both frontend and backend production servers
 
 ## Project Structure
 
@@ -115,4 +158,4 @@ tuneup-v2/
 
 ## License
 
-This project is licensed under the ISC License.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

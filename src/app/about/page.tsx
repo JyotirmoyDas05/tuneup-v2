@@ -1,5 +1,3 @@
-"use client";
-
 import React from 'react';
 import { Inter } from 'next/font/google';
 import { Music } from 'lucide-react';
@@ -30,8 +28,8 @@ export default function AboutPage() {
             emoji="🧑‍🤝‍🧑"
             content={
               <p className={inter.className}>
-                We are a team of passionate innovators—Prajnan Kumar Sarma, Garima Devi, Tanmoy Kalita, and Jyotirmoy Das—
-                from the departments of IT, ECE, CSE, and CSE respectively, currently in our 2nd semester. Combining our love for
+                We are a team of passionate innovators—Prajnan Kumar Sarma, Garima Devi, Tanmoy Kalita, Dibyajyoyi Deka and Jyotirmoy Das—
+                from the departments of IT and ECE Currently in our 2nd semester. Combining our love for
                 technology and music, we&apos;ve built this platform to empower artists, creators, and industry professionals.
               </p>
             }

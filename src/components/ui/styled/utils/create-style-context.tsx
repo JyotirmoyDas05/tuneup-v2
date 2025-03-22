@@ -7,88 +7,55 @@ import {
   forwardRef,
   useContext,
 } from 'react'
-import { cx } from 'styled-system/css'
-import { type StyledComponent, isCssProperty, styled } from 'styled-system/jsx'
+import { cn } from '@/lib/utils'
 
-type Props = Record<string, unknown>
-type Recipe = {
-  (props?: Props): Props
-  splitVariantProps: (props: Props) => [Props, Props]
-}
-type Slot<R extends Recipe> = keyof ReturnType<R>
-type Options = { forwardProps?: string[] }
+// This is a simplified version of the style context
+// that doesn't rely on styled-system
+// It allows us to maintain compatibility with existing component code
 
-const shouldForwardProp = (prop: string, variantKeys: string[], options: Options = {}) =>
-  options.forwardProps?.includes(prop) || (!variantKeys.includes(prop) && !isCssProperty(prop))
+type StyleContextType = Record<string, unknown>;
 
-export const createStyleContext = <R extends Recipe>(recipe: R) => {
-  const StyleContext = createContext<Record<Slot<R>, string> | null>(null)
+export const createStyleContext = () => {
+  const StyleContext = createContext<StyleContextType | null>(null)
 
-  const withRootProvider = <P extends {}>(Component: ElementType) => {
-    const StyledComponent = (props: P) => {
-      const [variantProps, otherProps] = recipe.splitVariantProps(props)
-      const slotStyles = recipe(variantProps) as Record<Slot<R>, string>
-
-      return (
-        <StyleContext.Provider value={slotStyles}>
-          <Component {...otherProps} />
-        </StyleContext.Provider>
-      )
-    }
+  // Simplified utility function to replace the original
+  const withProvider = <T, P extends { className?: string | undefined }>(
+    Component: ElementType,
+    _slot: string,
+  ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> => {
+    const StyledComponent = forwardRef<T, P>((props, ref) => {
+      return <Component {...props} ref={ref} className={props.className} />
+    })
+    
+    const displayName = 
+      typeof Component === 'string' 
+        ? Component 
+        : (Component as any).displayName || (Component as any).name || 'StyledComponent'
+    
+    StyledComponent.displayName = displayName
     return StyledComponent
   }
 
-  const withProvider = <T, P extends { className?: string | undefined }>(
-    Component: ElementType,
-    slot: Slot<R>,
-    options?: Options,
-  ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> => {
-    const StyledComponent = styled(
-      Component,
-      {},
-      {
-        shouldForwardProp: (prop, variantKeys) => shouldForwardProp(prop, variantKeys, options),
-      },
-    ) as StyledComponent<ElementType>
-    const StyledSlotProvider = forwardRef<T, P>((props, ref) => {
-      const [variantProps, otherProps] = recipe.splitVariantProps(props)
-      const slotStyles = recipe(variantProps) as Record<Slot<R>, string>
-
-      return (
-        <StyleContext.Provider value={slotStyles}>
-          <StyledComponent
-            {...otherProps}
-            ref={ref}
-            className={cx(slotStyles?.[slot], props.className)}
-          />
-        </StyleContext.Provider>
-      )
-    })
-    // @ts-expect-error
-    StyledSlotProvider.displayName = Component.displayName || Component.name
-
-    return StyledSlotProvider
-  }
-
+  // Simplified utility function to replace the original
   const withContext = <T, P extends { className?: string | undefined }>(
     Component: ElementType,
-    slot: Slot<R>,
+    _slot: string,
   ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> => {
-    const StyledComponent = styled(Component)
-    const StyledSlotComponent = forwardRef<T, P>((props, ref) => {
-      const slotStyles = useContext(StyleContext)
-      return (
-        <StyledComponent {...props} ref={ref} className={cx(slotStyles?.[slot], props.className)} />
-      )
+    const StyledComponent = forwardRef<T, P>((props, ref) => {
+      return <Component {...props} ref={ref} className={cn(props.className)} />
     })
-    // @ts-expect-error
-    StyledSlotComponent.displayName = Component.displayName || Component.name
-
-    return StyledSlotComponent
+    
+    const displayName = 
+      typeof Component === 'string' 
+        ? Component 
+        : (Component as any).displayName || (Component as any).name || 'StyledComponent'
+    
+    StyledComponent.displayName = displayName
+    return StyledComponent
   }
 
   return {
-    withRootProvider,
+    StyleContext,
     withProvider,
     withContext,
   }

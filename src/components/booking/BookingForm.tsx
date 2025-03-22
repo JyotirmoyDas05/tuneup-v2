@@ -27,7 +27,8 @@ export default function BookingForm({ venueId, venueName, onBookingComplete }: B
         toast.success('Booking request submitted successfully!');
         router.push(`/collab/venues/${venueId}`);
       }, 2000);
-    } catch (error) {
+    } catch (err) {
+      console.error('Form submission error:', err);
       toast.error('Failed to submit booking request. Please try again.');
     } finally {
       setIsSubmitting(false);
