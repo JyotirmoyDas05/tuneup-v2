@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaApple } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { AtSign, Lock, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/services/auth";
+import { AuthService } from "@/lib/appwrite/auth-service";
 import toast, { Toaster } from "react-hot-toast";
+import { AppwriteException } from 'appwrite';
+
+const authService = new AuthService();
 
 export default function SignupPage() {
   const router = useRouter();
@@ -23,8 +25,13 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await registerUser(formData.name, formData.email, formData.password);
-      if (response.token) {
+      const response = await authService.createAccount({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (response) {
         toast.success("Account created successfully! Redirecting to login...", {
           duration: 3000,
           position: "top-center",
@@ -40,8 +47,12 @@ export default function SignupPage() {
           router.push("/login");
         }, 2000);
       }
-    } catch (error: Error | unknown) {
-      toast.error(error instanceof Error ? error.message : "Failed to create account", {
+    } catch (error) {
+      const message = error instanceof AppwriteException 
+        ? error.message 
+        : "Failed to create account";
+      
+      toast.error(message, {
         duration: 3000,
         position: "top-center",
         style: {
@@ -54,6 +65,18 @@ export default function SignupPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      await authService.signInWithGoogle();
+      // The page will be redirected by Appwrite OAuth
+    } catch (error) {
+      const message = error instanceof AppwriteException 
+        ? error.message 
+        : "Failed to sign up with Google. Please try again.";
+      toast.error(message);
     }
   };
 
@@ -75,20 +98,12 @@ export default function SignupPage() {
         {/* Social Sign Up */}
         <div className="space-y-4 mb-6">
           <button 
-            onClick={() => toast.error("Google Sign Up not configured")}
+            onClick={handleGoogleSignup}
             className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl border border-gray-300 shadow-sm transition-colors"
             type="button"
           >
             <FcGoogle className="w-5 h-5" />
             Sign up with Google
-          </button>
-          <button 
-            onClick={() => toast.error("Apple Sign Up not configured")}
-            className="w-full flex items-center justify-center gap-3 bg-black hover:bg-gray-900 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-colors"
-            type="button"
-          >
-            <FaApple className="w-5 h-5" />
-            Sign up with Apple
           </button>
         </div>
 

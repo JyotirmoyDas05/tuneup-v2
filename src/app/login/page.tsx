@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { loginUser, AuthError } from "@/services/auth";
+import { AuthService } from "@/lib/appwrite/auth-service";
+import { FcGoogle } from "react-icons/fc";
+import { AppwriteException } from 'appwrite';
+
+const authService = new AuthService();
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,40 +21,41 @@ export default function LoginPage() {
     setIsLoading(true);
     
     try {
-      const response = await loginUser(email, password);
+      const session = await authService.login({
+        email,
+        password
+      });
       
-      if (response.success) {
+      if (session) {
+        // Get user profile after successful login
+        const userData = await authService.getCurrentUser();
         toast.success("Login successful!");
-        // Check if user has already completed their profile
-        const profileData = localStorage.getItem('profileData');
-        if (profileData) {
-          try {
-            const parsedProfile = JSON.parse(profileData);
-            // Check if the profile belongs to the current user
-            if (parsedProfile.userId === response.user.id) {
-              router.push("/dashboard");
-            } else {
-              // If profile data exists but belongs to a different user, clear it
-              localStorage.removeItem('profileData');
-              router.push("/profile-selection");
-            }
-          } catch (error) {
-            console.error('Error parsing profile data:', error);
-            localStorage.removeItem('profileData');
-            router.push("/profile-selection");
-          }
+        
+        if (userData.profile) {
+          router.push("/dashboard");
         } else {
           router.push("/profile-selection");
         }
       }
     } catch (error) {
-      if (error instanceof AuthError) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred. Please try again.");
-      }
+      const message = error instanceof AppwriteException 
+        ? error.message 
+        : "Failed to login. Please check your credentials.";
+      toast.error(message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await authService.signInWithGoogle();
+      // The page will be redirected by Appwrite OAuth
+    } catch (error) {
+      const message = error instanceof AppwriteException 
+        ? error.message 
+        : "Failed to login with Google. Please try again.";
+      toast.error(message);
     }
   };
 
@@ -60,6 +65,27 @@ export default function LoginPage() {
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
           <p className="mt-2 text-gray-600">Please sign in to your account</p>
+        </div>
+
+        {/* Social Login Button */}
+        <div className="space-y-4">
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl border border-gray-300 shadow-sm transition-colors"
+            type="button"
+          >
+            <FcGoogle className="w-5 h-5" />
+            Sign in with Google
+          </button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          </div>
         </div>
 
         <form onSubmit={handleLogin} className="mt-8 space-y-6">
